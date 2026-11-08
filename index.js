@@ -77,7 +77,7 @@ app.patch('/api/reservasi/:id', async (req, res => {
   const idPesanan = req.params.id;
   const { statusBaru } = req.body;
 
-  const { data, error } = await supabase.supabase
+  const { data, error } = await supabase
     .from('daftar_reservasi')
     .update({ status: statusBaru })
     .eq('id', idPesanan);
