@@ -3,6 +3,9 @@ const { createClient } = require ('@supabase/supabase-js');
 const app = express();
 const port = 3000;
 
+ap.use(cors());
+app.use(express.json());
+
 app.use(express.json());
   const supabaseUrl = 'https://xubesxqqvzujstlgvhsr.supabase.co';
   const supabaseKey = 'sb_publishable_WHusOQyVtX_JLVa9QSQnQQ_azHG09lM';
