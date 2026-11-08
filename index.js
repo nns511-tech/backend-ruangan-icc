@@ -18,6 +18,7 @@ app.get('/api/reservasi', async (req, res) => {
   const { data, error } = await supabase
   .from('daftar_reservasi')
   .select('*');
+  .order('id', { ascending: true});
 
   if (error){
     return res.status(500).json({ pesan: "Gagal mengambil data", error});
