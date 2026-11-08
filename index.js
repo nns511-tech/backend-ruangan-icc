@@ -32,7 +32,7 @@ app.post('/api/reservasi', async (req,res) => {
     .from('daftar_reservasi')
     .insert([
       {
-        peminjaman: dataBaru.peminjaman,
+        peminjam: dataBaru.peminjam,
         ruangan: dataBaru.ruangan,
         waktu: dataBaru.waktu,
         status: "Menunggu Persetujuan"
