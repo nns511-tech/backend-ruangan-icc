@@ -72,6 +72,23 @@ app.put('/api/reservasi/:id',async (req,res) => {
     data: data
   });
 });
+
+app.patch('/api/reservasi/:id', async (req, res => {
+  const idPesanan = req.params.id;
+  const { statusBaru } = req.body;
+
+  const { data, error } = await supabase.supabase
+    .from('daftar_reservasi')
+    .update({ status: statusBaru })
+    .eq('id', idPesanan);
+
+  if (error) {
+    return res.status(500).json({ pesan:"Gagal mengubah status", error});
+  }
+  res.json({ pesan: "Status berhasil diubah", data});
+});
+
+
 app.delete('/api/reservasi/:id', async (req, res) => {
   const idReservasi = req.params.id;
   const { data, error } = await supabase
