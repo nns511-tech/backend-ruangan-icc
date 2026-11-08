@@ -1,79 +1,88 @@
 const express = require ('express');
+const { createClient } = require ('@supabase/supabase-js');
 const app = express();
 const port = 3000;
 
 app.use(express.json());
- let daftarReservasi = [
-   {
-     id: 1,
-     peminjaman: "Najwa",
-     ruangan: "355, Gedung A",
-     waktu: "Selasa, 10:00 - 12:00",
-     status: "Disetujui"
-   }
- ];
+  const supabaseUrl = 'https://xubesxqqvzujstlgvhsr.supabase.co';
+  const supabaseKey = 'sb_publishable_WHusOQyVtX_JLVa9QSQnQQ_azHG09lM';
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.get('/', (req, res) => {
   res.send('Server Peminjaman Ruangan');
 });
 
-app.get('/api/reservasi', (req, res) => {
-  res.json(daftarReservasi);
+app.get('/api/reservasi', async (req, res) => {
+  const { data, error } = await supabase
+  .from('daftar_reservasi')
+  .select('*');
+
+  if (error){
+    return res.status(500).json({ pesan: "Gagal mengambil data", error});
+  }
+  res.json(data);
 });
 
-app.post('/api/reservasi', (req,res) => {
+app.post('/api/reservasi', async (req,res) => {
   const dataBaru = req.body;
-  const idBaru = daftarReservasi.length > 0
-  ? daftarReservasi[daftarReservasi.length - 1].id + 1 : 1;
-  
-  const reservasiBaru = {
-    id: idBaru,
-    peminjaman: dataBaru.peminjaman,
-    ruangan: dataBaru.ruangan,
-    waktu: dataBaru.waktu,
-    status: "Menunggu Persetujuan"
-  };
+  const { data, error } = await supabase
+    .from('daftar_reservasi')
+    .insert([
+      {
+        peminjaman: dataBaru.peminjaman,
+        ruangan: dataBaru.ruangan,
+        waktu: dataBaru.waktu,
+        status: "Menunggu Persetujuan"
+      }
+    ])
 
-  daftarReservasi.push(reservasiBaru);
+    .select();
+  if (error){
+    return res.status(500).json({ pesan: "Gagal menambah jadwal", error});
+  }
 
   res.status(201).json({
     pesan: "Berhasil, ruangan sudah masuk antrean.",
-    data: reservasiBaru
+    data: data
   });
 });
 
-app.put('/api/reservasi/:id', (req,res) => {
+app.put('/api/reservasi/:id',async (req,res) => {
   const idPesanan = parseInt(req.params.id);
   const dataPerubahan = req.body;
-  const indeks = daftarReservasi.findIndex(pesanan => pesanan.id === idPesanan);
-  if (indeks !== -1){
-    daftarReservasi[indeks].peminjaman = dataPerubahan.peminjaman;
-    daftarReservasi[indeks].ruangan = dataPerubahan.ruangan;
-    daftarReservasi[indeks].waktu = dataPerubahan.waktu;
-    daftarReservasi[indeks].status = dataPerubahan.status || daftarReservasi[indeks].status;
-    res.json({
-      pesan: "Jadwal ruangan berhasil diubah.",
-      data: daftarReservasi[indeks]
-    });
-  } else {
-    res.status(404).json({ pesan: "Error: Pesanan tidak ditemukan."});
+  const { data, error } = await supabase
+    .from ('daftar_reservasi')
+    .update ({
+      peminjaman: dataPerubahan.peminjaman,
+      ruangan: dataPerubahan.ruangan,
+      waktu: dataPerubahan.waktu,
+      status: dataPerubahan.status      
+    })
+    .eq('id', idPesanan)
+    .select();
+
+  if (error){
+    return res.status(500).json({ pesan: "Gagal memperbarui antrean", error});
   }
+  res.json({
+    pesan: "Antrean berhasil diperbarui.",
+    data: data
+  });
 });
 
-app.delete('/api/reservasi/:id', (req, res) => {
+app.delete('/api/reservasi/:id', async (req, res) => {
   const idPesanan = parseInt(req.params.id);
-  const indeks = daftarReservasi.findIndex(pesanan => pesanan.id === idPesanan);
-  if (indeks !== -1){
-    daftarReservasi.splice(indeks, 1);
-    res.json ({ pesanan: `Pesanan ruangan dengan ID ${idPesanan} berhasil dibatalkan.`});
+  const { error }= await supabase
+    .from('daftar_reservasi')
+    .delete()
+    .eq('id', idPesanan);
 
-  } else {
-    res.status(404).json({ pesan: "Error: Pesanan tidak ditemukan."});
+  if ( error ) {
+    return res.status(500).json({ pesan: "Gagal menghapus antrean", error});
   }
+  res.json({ pesan: `Antrean dengan ID ${idPesanan} berhasil dihapus dari database.`});
 });
 
 app.listen(port, () => {
   console.log(`Server berjalan di http://localhost:${port}`);
 });
-
-
