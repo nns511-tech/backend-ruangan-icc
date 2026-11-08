@@ -73,7 +73,7 @@ app.put('/api/reservasi/:id',async (req,res) => {
   });
 });
 
-app.patch('/api/reservasi/:id', async (req, res => {
+app.patch('/api/reservasi/:id', async (req, res) => {
   const idPesanan = req.params.id;
   const { statusBaru } = req.body;
 
