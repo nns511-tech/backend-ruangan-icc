@@ -72,6 +72,18 @@ app.put('/api/reservasi/:id',async (req,res) => {
     data: data
   });
 });
+app.delete('/api/reservasi/:id', async (req, res) => {
+  const idReservasi = req.params.id;
+  const { data, error } = await supabase
+    .from('daftar_reservasi')
+    .delete()
+    .eq('id', idReservasi);
+
+  if (error){
+    return res.status(500).json({ pesan: "Gagal menghapus jadwal", error});
+  }
+  res.json({ pesan: "Data berhasil dihapus", data});
+});
 
 app.delete('/api/reservasi/:id', async (req, res) => {
   const idPesanan = parseInt(req.params.id);
