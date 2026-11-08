@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 app.get('/api/reservasi', async (req, res) => {
   const { data, error } = await supabase
   .from('daftar_reservasi')
-  .select('*');
+  .select('*')
   .order('id', { ascending: true});
 
   if (error){
