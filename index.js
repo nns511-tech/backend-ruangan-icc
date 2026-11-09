@@ -32,9 +32,9 @@ app.post('/api/reservasi', async (req,res) => {
     .from('daftar_reservasi')
     .insert([
       {
-        peminjaman: dataBaru.peminjaman,
-        ruangan: dataBaru.ruangan,
-        waktu: dataBaru.waktu,
+        peminjaman: peminjaman,
+        ruangan: ruangan,
+        waktu: waktu,
         nim: nim,
         semester: semester,
         gedung: gedung,
@@ -54,6 +54,7 @@ app.post('/api/reservasi', async (req,res) => {
     data: data
   });
 });
+
 
 app.put('/api/reservasi/:id',async (req,res) => {
   const idPesanan = parseInt(req.params.id);
