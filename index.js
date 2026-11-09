@@ -45,8 +45,8 @@ app.post('/api/reservasi', async (req,res) => {
     ])
 
     .select();
-  if (error){
-    return res.status(500).json({ pesan: "Gagal menambah jadwal", error});
+  if ((!peminjam || !nim || !semester || !gedung || !lantai || !ruangan || !waktu || !keperluan){
+    return res.status(400).json({ error: "Semua kolom wajib diisi"});
   }
 
   res.status(201).json({
