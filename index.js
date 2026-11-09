@@ -1,14 +1,14 @@
-const express = require ('express');
-const cors = require ('cors');
-const { createClient } = require ('@supabase/supabase-js');
+const express = require('express');
+const cors = require('cors');
+const { createClient } = require('@supabase/supabase-js');
 const app = express();
-const port = 3000;
 
 app.use(cors());
 app.use(express.json());
-  const supabaseUrl = 'https://xubesxqqvzujstlgvhsr.supabase.co';
-  const supabaseKey = 'sb_publishable_WHusOQyVtX_JLVa9QSQnQQ_azHG09lM';
-  const supabase = createClient(supabaseUrl, supabaseKey);
+
+const supabaseUrl = 'https://xubesxqqvzujstlgvhsr.supabase.co';
+const supabaseKey = 'sb_publishable_WHusOQyVtX_JLVa9QSQnQQ_azHG09lM';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.get('/', (req, res) => {
   res.send('Server Peminjaman Ruangan');
@@ -32,6 +32,7 @@ app.post('/api/reservasi', async (req,res) => {
   if (!peminjaman || !nim || !semester || !gedung || !lantai || !ruangan || !waktu || !keperluan){
     return res.status(400).json({ error: "Semua kolom wajib diisi"});
   }
+  
   const { data, error } = await supabase
     .from('daftar_reservasi')
     .insert([
@@ -58,7 +59,6 @@ app.post('/api/reservasi', async (req,res) => {
     data: data
   });
 });
-
 
 app.put('/api/reservasi/:id',async (req,res) => {
   const idPesanan = parseInt(req.params.id);
@@ -100,19 +100,6 @@ app.patch('/api/reservasi/:id', async (req, res) => {
 
 
 app.delete('/api/reservasi/:id', async (req, res) => {
-  const idReservasi = req.params.id;
-  const { data, error } = await supabase
-    .from('daftar_reservasi')
-    .delete()
-    .eq('id', idReservasi);
-
-  if (error){
-    return res.status(500).json({ pesan: "Gagal menghapus jadwal", error});
-  }
-  res.json({ pesan: "Data berhasil dihapus", data});
-});
-
-app.delete('/api/reservasi/:id', async (req, res) => {
   const idPesanan = parseInt(req.params.id);
   const { error }= await supabase
     .from('daftar_reservasi')
@@ -125,6 +112,11 @@ app.delete('/api/reservasi/:id', async (req, res) => {
   res.json({ pesan: `Antrean dengan ID ${idPesanan} berhasil dihapus dari database.`});
 });
 
-app.listen(port, () => {
-  console.log(`Server berjalan di http://localhost:${port}`);
-});
+
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(3000, () => {
+    console.log(`Server berjalan di http://localhost:3000`);
+  });
+}
+
+module.exports = app;
