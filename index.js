@@ -27,7 +27,7 @@ app.get('/api/reservasi', async (req, res) => {
 });
 
 app.post('/api/reservasi', async (req,res) => {
-  const dataBaru = req.body;
+  const {peminjaman, ruangan, waktu, nim, semester, gedung, lantai, keperluan} = req.body;
   const { data, error } = await supabase
     .from('daftar_reservasi')
     .insert([
@@ -35,6 +35,11 @@ app.post('/api/reservasi', async (req,res) => {
         peminjaman: dataBaru.peminjaman,
         ruangan: dataBaru.ruangan,
         waktu: dataBaru.waktu,
+        nim: nim,
+        semester: semester,
+        gedung: gedung,
+        lantai: lantai,
+        keperluan: keperluan,
         status: "Menunggu Persetujuan"
       }
     ])
