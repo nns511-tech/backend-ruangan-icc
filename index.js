@@ -28,6 +28,10 @@ app.get('/api/reservasi', async (req, res) => {
 
 app.post('/api/reservasi', async (req,res) => {
   const {peminjaman, ruangan, waktu, nim, semester, gedung, lantai, keperluan} = req.body;
+
+  if (!peminjaman || !nim || !semester || !gedung || !lantai || !ruangan || !waktu || !keperluan){
+    return res.status(400).json({ error: "Semua kolom wajib diisi"});
+  }
   const { data, error } = await supabase
     .from('daftar_reservasi')
     .insert([
@@ -43,11 +47,11 @@ app.post('/api/reservasi', async (req,res) => {
         status: "Menunggu Persetujuan"
       }
     ])
-
     .select();
-  if ((!peminjam || !nim || !semester || !gedung || !lantai || !ruangan || !waktu || !keperluan){
-    return res.status(400).json({ error: "Semua kolom wajib diisi"});
-  }
+
+    if (error) {
+        return res.status(500).json({ pesan: "Gagal menyimpan data", error });
+    }
 
   res.status(201).json({
     pesan: "Berhasil, ruangan sudah masuk antrean.",
